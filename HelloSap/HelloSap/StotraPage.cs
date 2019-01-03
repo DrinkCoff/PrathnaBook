@@ -45,11 +45,13 @@ namespace HelloSap
             {
                 label.Text = @"Error" + System.Environment.NewLine + "Not Available";
             }
-            label.FontSize = 16.0;
+            label.FontSize = Helpers.Settings.FontSizeSettings;
             
             label.HorizontalTextAlignment = TextAlignment.Center;
 
             stack.Children.Add(label);
+
+            Title = stotraName;
 
             scroll.Content = stack;
             this.Content = scroll;

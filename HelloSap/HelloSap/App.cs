@@ -20,7 +20,8 @@ namespace HelloSap
             {
                 using (BinaryReader br = new BinaryReader(Android.App.Application.Context.Assets.Open(dbName)))
                 {
-                    using (BinaryWriter bw = new BinaryWriter(new FileStream(dbPath, FileMode.Create)))
+                    using (
+                        BinaryWriter bw = new BinaryWriter(new FileStream(dbPath, FileMode.Create)))
                     {
                         byte[] buffer = new byte[2048];
                         int len = 0;
@@ -32,9 +33,9 @@ namespace HelloSap
                 }
             }
 
-            MainPage = new HelloSap.MainPage();
+            //MainPage = new HelloSap.MainPage();
 
-            //MainPage = new NavigationPage(new NewListViewPage());
+            MainPage = new NavigationPage(new NewListViewPage(false, ""));
 
             // new ListViewPage();
 

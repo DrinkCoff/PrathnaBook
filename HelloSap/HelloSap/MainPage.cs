@@ -12,7 +12,7 @@ namespace HelloSap
 
         public MainPage()
         {
-            masterPage = new NewListViewPage();
+            masterPage = new NewListViewPage(false, "");
             Master = masterPage;
             Detail = new NavigationPage(new StotraPage(@"Work In Progress" + System.Environment.NewLine + "Coming Soon..."));
 

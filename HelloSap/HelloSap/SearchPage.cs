@@ -3,60 +3,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace HelloSap
 {
-    class NewListViewPage : ContentPage
+    public class SearchPage : ContentPage
     {
-
         public ListView ListView { get { return listView; } }
 
         ListView listView;
         SearchBar searchBar;
-        List<StotraInternal> stotras;
-        ToolbarItem toolbarItemSearch;
-        ToolbarItem settings;
+        private List<StotraInternal> stotras;
+        private ICommand _searchCommand;
 
-        public NewListViewPage(bool searchMode, string searchTerm)
+        public SearchPage()
         {
-            toolbarItemSearch = new ToolbarItem
-            (
-                "Search",
-                "search.png",
-                () =>
-                {
-                    Navigation.PushAsync(new SearchPage());
-                }
-            );
-
-            settings = new ToolbarItem
-            (
-                "Settings",
-                "",
-                () =>
-                {
-                    Navigation.PushAsync(new SettingsPage());
-                }
-            );
-
-            //this.toolbarItem.Icon = "android:id / search_mag_icon";
-            this.ToolbarItems.Add(toolbarItemSearch);
-            this.ToolbarItems.Add(settings);
-
-            Label header = new Label
+            stotras = InitializeStotras();
+            searchBar = new SearchBar
             {
-                Text = "स्तोत्रम्",
-                FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
-                HorizontalOptions = LayoutOptions.Center
+                Placeholder = "Enter search term",
             };
 
+            searchBar.Focus();
 
-            stotras = InitializeStotras();
-            
+            searchBar.SearchButtonPressed += SearchBar_SearchButtonPressed;
+            searchBar.SearchCommand = SearchCommand;
+            searchBar.TextChanged += SearchBar_TextChanged;
+
             listView = new ListView
             {
                 ItemsSource = stotras,
@@ -92,25 +67,62 @@ namespace HelloSap
                         }
                     };
                 })
-                    
+
             };
 
             listView.ItemSelected += OnItemSelected;
-
-            Title = "मुख्य पृष्ठः";
 
             this.Content = new StackLayout
             {
                 Children =
                 {
-                    header,
-                    //searchBar,
+                    searchBar,
                     listView
                 }
             };
         }
 
-        public List<StotraInternal> InitializeStotras()
+        private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.NewTextValue))
+            {
+                listView.ItemsSource = stotras;
+            }
+
+            else
+            {
+                listView.ItemsSource = stotras.Where(x => x.Name.StartsWith(e.NewTextValue));
+            }
+        }
+
+        public ICommand SearchCommand
+        {
+            get
+            {
+                return _searchCommand ?? (_searchCommand = new Command<string>((text) =>
+                {
+                    // The text parameter can now be used for searching.
+                    
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        listView.ItemsSource = stotras;
+                    }
+
+                    else
+                    {
+                        listView.ItemsSource = stotras.Where(x => x.Name.StartsWith(text));
+                    }
+
+                }));
+            }
+        }
+
+        async private void SearchBar_SearchButtonPressed(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new SearchPage());
+        }
+
+        private List<StotraInternal> InitializeStotras()
         {
             List<StotraInternal> stotras = new List<StotraInternal>();
 
@@ -146,5 +158,4 @@ namespace HelloSap
             }
         }
     }
-    
 }
