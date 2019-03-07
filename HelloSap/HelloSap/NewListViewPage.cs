@@ -12,12 +12,6 @@ namespace HelloSap
 {
     class NewListViewPage : ContentPage
     {
-
-        public ListView ListView { get { return listView; } }
-
-        ListView listView;
-        SearchBar searchBar;
-        List<StotraInternal> stotras;
         ToolbarItem toolbarItemSearch;
         ToolbarItem settings;
 
@@ -36,7 +30,7 @@ namespace HelloSap
             settings = new ToolbarItem
             (
                 "Settings",
-                "",
+                "settings.png",
                 () =>
                 {
                     Navigation.PushAsync(new SettingsPage());
@@ -47,17 +41,45 @@ namespace HelloSap
             this.ToolbarItems.Add(toolbarItemSearch);
             this.ToolbarItems.Add(settings);
 
-            Label header = new Label
+            Label header = this.PopulateHeader();
+
+            ListView listView = this.PopulateList(InitializeStotras());
+            listView.ItemSelected += OnItemSelected;
+
+            Title = "मुख्य पृष्ठः";
+
+            this.ContentUpdate(header, listView);
+        }
+
+        public void ContentUpdate(Label header, ListView listView)
+        {
+            this.Content = new StackLayout
+            {
+                Children =
+                {
+                    header,
+                    //searchBar,
+                    listView
+                }
+            };
+        }
+
+
+
+        public Label PopulateHeader()
+        {
+            return new Label
             {
                 Text = "स्तोत्रम्",
                 FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
                 HorizontalOptions = LayoutOptions.Center
             };
+        }
 
 
-            stotras = InitializeStotras();
-            
-            listView = new ListView
+        public ListView PopulateList(List<StotraInternal> stotras)
+        {
+            return new ListView
             {
                 ItemsSource = stotras,
 
@@ -92,34 +114,36 @@ namespace HelloSap
                         }
                     };
                 })
-                    
-            };
 
-            listView.ItemSelected += OnItemSelected;
-
-            Title = "मुख्य पृष्ठः";
-
-            this.Content = new StackLayout
-            {
-                Children =
-                {
-                    header,
-                    //searchBar,
-                    listView
-                }
             };
         }
 
         public List<StotraInternal> InitializeStotras()
         {
             List<StotraInternal> stotras = new List<StotraInternal>();
+            string databaseFileName = Helpers.Settings.DatabaseName;
+            string databaseFilePath = Helpers.Settings.GetDatabasePath();
 
-            string dbName = "stotraTest.db3";
-            string dbPath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.ToString(), dbName);
-
-            if (File.Exists(path: dbPath))
+            if (!File.Exists(databaseFilePath))
             {
-                var db = new SQLiteConnection(dbPath);
+                using (BinaryReader br = new BinaryReader(Android.App.Application.Context.Assets.Open(databaseFileName)))
+                {
+                    using (
+                        BinaryWriter bw = new BinaryWriter(new FileStream(databaseFilePath, FileMode.Create)))
+                    {
+                        byte[] buffer = new byte[2048];
+                        int len = 0;
+                        while ((len = br.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            bw.Write(buffer, 0, len);
+                        }
+                    }
+                }
+            }
+
+            if (File.Exists(path: databaseFilePath))
+            {
+                var db = new SQLiteConnection(databaseFilePath);
                 db.CreateTable<Stotra>();
 
                 var values = db.Query<Stotra>(@"select * from Stotras");
@@ -139,11 +163,26 @@ namespace HelloSap
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var item = e.SelectedItem as StotraInternal;
-            listView.SelectedItem = false;
+            //listView.SelectedItem = false;
             if (item != null)
             {
                 await Navigation.PushAsync(new StotraPage(item.Name));
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            //your code here;
+
+            Label header = this.PopulateHeader();
+
+            ListView listView = this.PopulateList(InitializeStotras());
+            listView.ItemSelected += OnItemSelected;
+
+            Title = "मुख्य पृष्ठः";
+
+            this.ContentUpdate(header, listView);
         }
     }
     

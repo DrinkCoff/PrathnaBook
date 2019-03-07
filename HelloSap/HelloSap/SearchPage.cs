@@ -17,7 +17,7 @@ namespace HelloSap
         SearchBar searchBar;
         private List<StotraInternal> stotras;
         private ICommand _searchCommand;
-
+        
         public SearchPage()
         {
             stotras = InitializeStotras();
@@ -126,12 +126,9 @@ namespace HelloSap
         {
             List<StotraInternal> stotras = new List<StotraInternal>();
 
-            string dbName = "stotraTest.db3";
-            string dbPath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.ToString(), dbName);
-
-            if (File.Exists(path: dbPath))
+            if (File.Exists(path: Helpers.Settings.GetDatabasePath()))
             {
-                var db = new SQLiteConnection(dbPath);
+                var db = new SQLiteConnection(Helpers.Settings.GetDatabasePath());
                 db.CreateTable<Stotra>();
 
                 var values = db.Query<Stotra>(@"select * from Stotras");
@@ -156,6 +153,14 @@ namespace HelloSap
             {
                 await Navigation.PushAsync(new StotraPage(item.Name));
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            //your code here;
+
+            InitializeStotras();
         }
     }
 }

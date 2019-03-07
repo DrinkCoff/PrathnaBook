@@ -23,7 +23,7 @@ namespace HelloSap
 
             languagePicker.Title = "Langugage";
 
-            languagePicker.SelectedIndex = 0;
+            languagePicker.SelectedIndex = languagePicker.Items.IndexOf(langugageSettings);
             languagePicker.SelectedIndexChanged += LanguagePicker_SelectedIndexChanged;
                 // += this.LanguagePickerSelectedIndexChanged;
 
@@ -36,7 +36,7 @@ namespace HelloSap
             fontSizePicker.Items.Add("20");
 
             fontSizePicker.Title = "Font Size";
-            fontSizePicker.SelectedIndex = 0;
+            fontSizePicker.SelectedIndex = fontSizePicker.Items.IndexOf(fontSizeSettings.ToString());
             fontSizePicker.SelectedIndexChanged += FontSizePicker_SelectedIndexChanged;
 
 
@@ -66,7 +66,33 @@ namespace HelloSap
             //Method call every time when picker selection changed.
             var selectedValue = picker.SelectedItem.ToString();
 
+            string databaseName = "stotra-Sanskrit.db3";
+            switch (selectedValue)
+            {
+                case "संस्कृत (Sanskrit)":
+                    databaseName = "stotra-Sanskrit.db3";
+                    break;
+                case "ગુજરાતી (Gujarati)":
+                    databaseName = "stotra-Gujarati.db3";
+                    break;
+                case "English":
+                    databaseName = "stotra-English.db3";
+                    break;
+                default:
+                    break;
+            }
+
+            Helpers.Settings.DatabaseName = databaseName;
             Helpers.Settings.LanguageSettings = selectedValue;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            //Some logics here
+
+            Navigation.PushAsync(new NavigationPage(new NewListViewPage(false, "")));
+
+            return base.OnBackButtonPressed();
         }
     }
 }

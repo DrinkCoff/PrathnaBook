@@ -16,7 +16,7 @@ namespace HelloSap
             Master = masterPage;
             Detail = new NavigationPage(new StotraPage(@"Work In Progress" + System.Environment.NewLine + "Coming Soon..."));
 
-            masterPage.ListView.ItemSelected += OnItemSelected;
+            //masterPage.ListView.ItemSelected += OnItemSelected;
 
             if (Device.RuntimePlatform == Device.UWP)
             {
@@ -30,7 +30,7 @@ namespace HelloSap
             if (item != null)
             {
                 Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType, item.Name));
-                masterPage.ListView.SelectedItem = null;
+                //masterPage.ListView.SelectedItem = null;
                 IsPresented = false;
             }
         }

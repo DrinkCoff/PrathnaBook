@@ -12,14 +12,11 @@ namespace HelloSap
     {
        public  StotraPage(string stotraName)
         {
-            string dbName = "stotraTest.db3";
-            string dbPath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.ToString(), dbName);
-
             List<Stotra> values = null;
 
-            if (File.Exists(dbPath))
+            if (File.Exists(Helpers.Settings.GetDatabasePath()))
             {
-                var db = new SQLiteConnection(dbPath);
+                var db = new SQLiteConnection(Helpers.Settings.GetDatabasePath());
 
                 values = db.Query<Stotra>(@"select * from Stotras where name = '" + stotraName + @"'");
             }

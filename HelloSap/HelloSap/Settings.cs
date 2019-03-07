@@ -2,6 +2,7 @@
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 using System;
+using System.IO;
 
 namespace Helpers
 {
@@ -31,6 +32,9 @@ namespace Helpers
         private const string LanguageKey = "languageKey";
         private static readonly string LanguageDefault = "संस्कृत (Sanskrit)";
 
+        private const string DatabaseFileNameKey = "databaseFileName";
+        private static readonly string DatabseFileNameDefault = "stotra-Sanskrit.db3";
+
         #endregion
 
 
@@ -45,6 +49,28 @@ namespace Helpers
             AppSettings.AddOrUpdateValue(SettingsKey, value);
         }
     }
+
+        public static string DatabaseName
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(DatabaseFileNameKey, DatabseFileNameDefault);
+            }   
+
+            set
+            {
+                AppSettings.AddOrUpdateValue(DatabaseFileNameKey, value);
+            }
+        }
+
+        public static string GetDatabasePath()
+        {
+            string databasePath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.ToString(), AppSettings.GetValueOrDefault(DatabaseFileNameKey, DatabaseName));
+            //databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), databaseName);
+
+                return databasePath;
+            
+        }
 
         public static uint FontSizeSettings
         {
