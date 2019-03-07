@@ -95,9 +95,6 @@
     <AndroidResource Include="Resources\Drawable\search.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\Drawable\AppIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\Drawable\settings.png" />
   </ItemGroup>
   <Import Project="..\HelloSap\HelloSap.projitems" Label="Shared" Condition="Exists('..\HelloSap\HelloSap.projitems')" />
