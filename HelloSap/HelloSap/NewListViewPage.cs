@@ -8,6 +8,12 @@ using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
+using Android.Support.Design.Widget;
+using Android.Support.V4.App;
+using Android.Util;
+using Android;
+using Android.Support.V4.Content;
+
 namespace HelloSap
 {
     class NewListViewPage : ContentPage
@@ -123,23 +129,6 @@ namespace HelloSap
             List<StotraInternal> stotras = new List<StotraInternal>();
             string databaseFileName = Helpers.Settings.DatabaseName;
             string databaseFilePath = Helpers.Settings.GetDatabasePath();
-
-            if (!File.Exists(databaseFilePath))
-            {
-                using (BinaryReader br = new BinaryReader(Android.App.Application.Context.Assets.Open(databaseFileName)))
-                {
-                    using (
-                        BinaryWriter bw = new BinaryWriter(new FileStream(databaseFilePath, FileMode.Create)))
-                    {
-                        byte[] buffer = new byte[2048];
-                        int len = 0;
-                        while ((len = br.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            bw.Write(buffer, 0, len);
-                        }
-                    }
-                }
-            }
 
             if (File.Exists(path: databaseFilePath))
             {

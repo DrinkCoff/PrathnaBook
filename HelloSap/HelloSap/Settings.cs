@@ -72,6 +72,15 @@ namespace Helpers
             
         }
 
+        public static string GetDatabasePath(string filename)
+        {
+            string databasePath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.ToString(), AppSettings.GetValueOrDefault(DatabaseFileNameKey, filename));
+            //databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), databaseName);
+
+            return databasePath;
+
+        }
+
         public static uint FontSizeSettings
         {
             get
